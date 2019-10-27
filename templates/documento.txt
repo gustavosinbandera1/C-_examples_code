@@ -1,0 +1,54 @@
+// Para una función, ambas opciones son equivalentes
+template <class identificador> definición_de_función;
+template <typename identificador> definición_de_función;
+
+Tal vez con un ejemplo esta idea quede más clara. 
+Pensemos en una función que nos retorne el mayor de dos datos que le demos como argumentos 
+y que sirva con cualquier tipo:
+
+    template <class tipo> 
+    tipo mayor(tipo dato1, tipo dato2){
+      return (dato1 > dato2 ? dato1 : dato2);
+    }
+
+La función no sirve cuando los tipos de los datos son diferentes, 
+entonces no podríamos usarla con un entero y un real, porque solamente se ha definido un identificador 
+de tipo. Para usar más tipos basta con definir más identificadores, 
+de esta manera podríamos escribir la función de la siguiente forma:
+
+
+    template <class tipo1, class tipo2> 
+    tipo1 mayor(tipo1 dato1, tipo2 dato2){
+      return (dato1 > dato2 ? dato1 : dato2);
+    }
+
+    int a = 10;
+    float b = 11.0;
+    float c = mayor(b,a); // como el primer argumento es un float, el resultado también lo es
+
+
+CLASE PLANTILLA
+
+Como mencioné al principio de la nota, podemos escribir también clases con plantillas, 
+llamadas clases-plantilla, y crear objetos que sirvan con cualquier tipo de dato, 
+esta característica es de gran ayuda al momento de escribir, 
+por ejemplo, una clase para arreglos o para matrices que sirven con cualquier tipo y no solo con uno.
+
+    template <class T> //identificador de tipo: T
+    class Coordenada{
+    private:
+      T x; //atributos de tipo T
+      T y;
+      
+    public:
+      Coordenada(T x=0, T y=0); //parámetros de tipo T
+      T dameX(){return x}; 
+      T dameY(){return y};      //retorna un tipo T
+      void nuevoX(T x){this -> x = x};
+      void nuevoY(T y){this -> y = y};
+    }
+    template <class T>
+    Coordenada<T>::Coordenada(T x, T y){
+      this -> x = x;
+      this -> y = y;
+    }
