@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <iostream>
+#include <cstring>
+
+
+template <typename POD>
+class SerializablePOD
+{
+public:
+
+    static size_t serialize_size(POD str)
+    {
+        return sizeof(str);
+    }
+
+    static char* serialize( char* target, POD value )
+    {  
+        memcpy( target, &value, serialize_size(value) );
+        std::cout<<"verificado"<<serialize_size(value)<<std::endl;
+        return target + sizeof(value); //move the pointer to the next addres
+    } 
+
+    static const char* deserialize( const char* source, POD& target )
+    {
+        std::cout<<"Vamos a deserializar"<<std::endl;
+        memcpy( &target, source, serialize_size(target) );
+        return source +sizeof(target);
+    }
+};
+
+template<>
+size_t SerializablePOD<char*>::serialize_size(char* str)
+{
+    std::cout<<"el TAMANO del char* "<<sizeof(size_t) + strlen(str)<<std::endl;
+    return sizeof(size_t) + strlen(str);
+}
+
+template<>
+const char* SerializablePOD<char*>::deserialize( const char* source, char*& target )
+{
+    size_t length ;
+    char* test;
+    std::cout<<"Vamos a deserializar" << std::endl;
+    std::cout <<":----------address of char fiel in structure------------------------------->"<< static_cast<const void*>(&target)<<std::endl;
+    memcpy( &length, source, sizeof(size_t));
+    std::cout<<"el length jajaj.."<< (size_t)length<<std::endl;
+    source = source +sizeof(size_t);
+    target = (char*)malloc(sizeof(char)*30);
+    memcpy( &target, source , length );
+    std::cout<<"salida: "<<std::string(source,length)<<std::endl;
+    return source + length;  
+
+}
+
+template<>
+char* SerializablePOD<char*>::serialize( char* target, char* value )
+{  
+    
+    size_t l = strlen(value);
+    std::cout <<": ---------->"<< static_cast<const void*>(target)<<std::endl;
+    std::cout<<"vamos a serializar char*->"<<l<<std::endl;
+    value = (char*)malloc(sizeof(char)*l);
+        
+    memcpy( target, &l , sizeof(size_t) );
+    target = target + sizeof(size_t);
+    std::cout <<": ---------->"<< static_cast<const void*>(target)<<std::endl;
+    memcpy( target, value, strlen(value) );
+    std::cout <<": ---------->"<< static_cast<const void*>(target)<<std::endl;  
+     std::cout<<">>>>>>>>>>>>>>>>>>>>>>>>>>>>"<<std::string(target,l)<<std::endl;
+    return target + l;
+
+} 
