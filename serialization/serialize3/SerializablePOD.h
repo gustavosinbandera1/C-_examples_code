@@ -16,13 +16,13 @@ public:
     static char* serialize( char* target, POD value )
     {  
         memcpy( target, &value, serialize_size(value) );
-        std::cout<<"verificado"<<serialize_size(value)<<std::endl;
+        std::cout << "verificado" << serialize_size(value) << std::endl;
         return target + sizeof(value); //move the pointer to the next addres
     } 
 
     static const char* deserialize( const char* source, POD& target )
     {
-        std::cout<<"Vamos a deserializar"<<std::endl;
+        std::cout << "Vamos a deserializar" << std::endl;
         memcpy( &target, source, serialize_size(target) );
         return source +sizeof(target);
     }
@@ -40,14 +40,17 @@ const char* SerializablePOD<char*>::deserialize( const char* source, char*& targ
 {
     size_t length ;
     char* test;
-    std::cout<<"Vamos a deserializar" << std::endl;
+    std::cout <<"Vamos a deserializar" << std::endl;
     std::cout <<":----------address of char fiel in structure------------------------------->"<< static_cast<const void*>(&target)<<std::endl;
     memcpy( &length, source, sizeof(size_t));
-    std::cout<<"el length jajaj.."<< (size_t)length<<std::endl;
+    std::cout << "el length of string.."<< (size_t)length << std::endl;
     source = source +sizeof(size_t);
-    target = (char*)malloc(sizeof(char)*30);
-    memcpy( &target, source , length );
-    std::cout<<"salida: "<<std::string(source,length)<<std::endl;
+    //target = (char*)malloc(sizeof(char)*length);
+    memcpy( target, source , length );
+    std::cout << "salida: " << std::string(source,length) << std::endl;
+    std::cout << "dato en el field despues de deserializar: : " << target << std::endl;
+    std::cout <<":----------address->"<< static_cast<const void*>(target)<<std::endl;
+
     return source + length;  
 
 }
@@ -57,16 +60,13 @@ char* SerializablePOD<char*>::serialize( char* target, char* value )
 {  
     
     size_t l = strlen(value);
-    std::cout <<": ---------->"<< static_cast<const void*>(target)<<std::endl;
-    std::cout<<"vamos a serializar char*->"<<l<<std::endl;
-    value = (char*)malloc(sizeof(char)*l);
-        
+    std::cout << ": dir buffer ---------->" << static_cast<const void*> (&target) << std::endl;
+    std::cout << ": dir inside pointer to put data ---------->" << static_cast<const void*> (value) << std::endl;
+    std::cout << "vamos a serializar char*->" << l << std::endl;
     memcpy( target, &l , sizeof(size_t) );
     target = target + sizeof(size_t);
-    std::cout <<": ---------->"<< static_cast<const void*>(target)<<std::endl;
     memcpy( target, value, strlen(value) );
-    std::cout <<": ---------->"<< static_cast<const void*>(target)<<std::endl;  
-     std::cout<<">>>>>>>>>>>>>>>>>>>>>>>>>>>>"<<std::string(target,l)<<std::endl;
+    std::cout << target << std::endl;
     return target + l;
 
 } 

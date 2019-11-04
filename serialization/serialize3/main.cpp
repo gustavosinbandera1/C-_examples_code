@@ -22,13 +22,10 @@ int main (void) {
     size_t length;
     char* buffer;
     char** pBuffer = &buffer; //when serialized buffer point to different address , that is why pBuffer can hold the initial address
-    char ssid[] = "micustomSSIDlllllllllllllllllllll";
-    char pass[] = "miCustomPasswordaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+
     
-    WiFiDTO *wifi_dto =  new WiFiDTO();
-    wifi_dto->createObject(8,7,1,1,1,ssid,pass);
     
-   /*  
+    WiFiDTO* wifi_dto = new WiFiDTO(wifi_params);
     length = wifi_dto->serialize_size(); //get the length of the dto class
     //buffer to store the serialized data
    
@@ -40,9 +37,9 @@ int main (void) {
     buffer = *pBuffer; //recover the initial address to deserialized information
     std::cout <<"ADDRESS BUFFER TO DESERIALIZE>"<< static_cast<const void*>(buffer)<<"------>"<<std::endl;
     wifi_dto->setData();
-     wifi_dto->printData();
+    //wifi_dto->printData();
   
-    wifi_dto->deserialize(buffer); */
+    wifi_dto->deserialize(buffer);  
   
     //delete[] buffer;
   // wifi_dto.printData();

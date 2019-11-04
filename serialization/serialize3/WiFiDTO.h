@@ -26,36 +26,14 @@ This class represent the data that need to travel throught:
 class WiFiDTO : public Serializable {
 
 public:
-  
-    wifi_dto_config_t* createObject(int apChannel, int apMaxConn, int wapEnabled,
-                        int wstEnabled, int isOpen,  char ssid[],
-                        char pass[] ) {
-    
-        ptrSettings_ = (wifi_dto_config_t*)malloc(sizeof(*ptrSettings_)/*  +
-                        sizeof(char) * strlen(ssid) + 
-                        sizeof(char) * strlen(pass) */);
-        
-        ptrSettings_->apChannel = apChannel;
-        ptrSettings_->apMaxConn = apMaxConn;
-        ptrSettings_->WAP_enabled = wapEnabled;
-        ptrSettings_->WST_enabled =  wstEnabled;
-        ptrSettings_->isOpen = isOpen;
-        ptrSettings_->apSSID = ssid;
-        ptrSettings_->apPassword = pass;
 
-        printf("Size of Struct pointer : %lu\n", sizeof(ptrSettings_)); 
-
-        printf("Size of Struct  %lu\n", sizeof(wifi_dto_config_t));  
-
-        //addresses
-        std::cout << ptrSettings_ << std::endl;
-        std::cout << &ptrSettings_->apChannel << std::endl;
-        std::cout << &ptrSettings_->apMaxConn << std::endl;
-        std::cout << &ptrSettings_->WAP_enabled << std::endl;
-        std::cout << &ptrSettings_->WST_enabled << std::endl;
-        std::cout << &ptrSettings_->isOpen << std::endl;
-        std::cout << &ptrSettings_->apSSID << std::endl;
-        std::cout << &ptrSettings_->apPassword << std::endl;
+    WiFiDTO(wifi_dto_config_t& settings) {
+        ptrSettings_ = (wifi_dto_config_t*)malloc(sizeof(*ptrSettings_) + 
+                                                sizeof(char) * strlen(settings.apSSID) +  
+                                                sizeof(char) * strlen(settings.apPassword) );
+        ptrSettings_ = &settings;
+       /*  std::cout<<"esto es una prueba mas"<<std::endl;
+        std::cout<<"constructor working fine"<<std::endl;
         std::cout << "Showing Data" << std::endl;
         std::cout << "Settings.apChannel " << ptrSettings_->apChannel << std::endl;
         std::cout << "Settings.apMaxConn " << ptrSettings_->apMaxConn << std::endl;
@@ -63,8 +41,10 @@ public:
         std::cout << "Settings.WST " << ptrSettings_->WST_enabled << std::endl;  
         std::cout << "Settings.isOpen " << ptrSettings_->isOpen << std::endl;
         std::cout << "Settings.apPassword " << ptrSettings_->apPassword << std::endl;
-        std::cout << "Settings.SSID " << &ptrSettings_->apSSID << std::endl;
-        return ptrSettings_;
+        std::cout << "Settings.SSID " << ptrSettings_->apSSID << std::endl;
+
+        printf("Size of Struct pointer : %lu\n", sizeof(ptrSettings_)); 
+        printf("Size of Struct  %lu\n", sizeof(wifi_dto_config_t));   */
     }
 
     virtual size_t serialize_size() const {
@@ -76,7 +56,6 @@ public:
         SerializablePOD<int>::serialize_size(ptrSettings_->isOpen);
         SerializablePOD<char*>::serialize_size(ptrSettings_->apSSID)  + 
         SerializablePOD<char*>::serialize_size(ptrSettings_->apPassword);
-          
                     
         return size; 
     }
@@ -100,10 +79,12 @@ public:
         std::cout <<"isOpen: (bool)------------->"<<"------->"<<&ptrSettings_->isOpen<<"--->Value: "<< ptrSettings_->isOpen<<std::endl;
         dataOut = SerializablePOD<int>::serialize(dataOut, ptrSettings_->isOpen);
 
-        std::cout <<"apSSID: (char*) --------->"<< static_cast<const void*>(&ptrSettings_->apSSID)<<std::endl;
+        //print the address stored in ptrSettings_ to know the address of field with data
+        std::cout <<"apSSID: (char*) --------->Dir char*------>"<< static_cast<const void*>(&ptrSettings_->apSSID)<<std::endl;
+        std::cout <<"apSSID: (char*) --------->Dir block memory with data char*------>"<< static_cast<const void*>(ptrSettings_->apSSID)<<std::endl;
         dataOut = SerializablePOD<char*>::serialize(dataOut, ptrSettings_->apSSID);
 
-       std::cout <<"apPassword: (char*) -------->"<< static_cast<const void*>(&ptrSettings_->apPassword)<<std::endl;
+       std::cout <<"apPassword: (char*) -------->"<< static_cast<const void*>(ptrSettings_->apPassword)<<std::endl;
         dataOut  = SerializablePOD<char*>::serialize(dataOut, ptrSettings_->apPassword); 
         
     }
@@ -135,17 +116,19 @@ public:
         std::cout<<std::endl;
 
         std::cout<<"---------------------------strings-------------"<<std::endl;
-        std::cout<<"address of SSID befpre serialized------------>"<<static_cast<const void*>(&ptrSettings_->apSSID)<<std::endl;
+        std::cout<<"address of SSID before serialized------------>"<<static_cast<const void*>(&ptrSettings_->apSSID)<<std::endl;
 
         dataIn = dataIn + 4;
         std::cout <<": ---------->address of buffer to get length + ssid   "<< static_cast<const void*>(dataIn)<<std::endl;
         std::cout<<std::endl;
+        //ptrSettings_->apSSID = new char[14];
         dataIn = SerializablePOD<char*>::deserialize(dataIn, ptrSettings_->apSSID); 
         std::cout<<"dato deserializado en el metodo------------>"<<static_cast<const void*>(&ptrSettings_->apSSID)<<std::endl;
         std::cout <<":Buffer address pointed"<< static_cast<const void*>(dataIn)<<std::endl; 
+        //std::cout << ptrSettings_->apSSID << std::endl;
         //std::cout <<": ---------->"<< static_cast<const void*>(dataIn)<<std::endl;
-       /*   dataIn = SerializablePOD<char*>::deserialize(dataIn, ptrSettings_->apPassword); 
-        std::cout<<"dato deserializado en el metodo------------>"<<*(char*)dataIn<<std::endl;   */
+        dataIn = SerializablePOD<char*>::deserialize(dataIn, ptrSettings_->apPassword); 
+        std::cout<<"dato deserializado en el metodo------------>"<<*(char*)dataIn<<std::endl;  
 
     }
 
