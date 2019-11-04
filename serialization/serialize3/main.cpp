@@ -3,8 +3,8 @@
 #include "WiFiDTO.h"
 
 
-char ssid[] = "miSSIDPersonal";
-char pass[] = "miPassword";
+char ssid[] = "miSSIDPersonal3";
+char pass[] = "miPassword12345";
 int main (void) {
     
     wifi_dto_config_t wifi_params = {
@@ -40,9 +40,10 @@ int main (void) {
     //wifi_dto->printData();
   
     wifi_dto->deserialize(buffer);  
-  
-    //delete[] buffer;
-  // wifi_dto.printData();
+    wifi_dto->printData();
+    free(buffer);
+    delete[] wifi_dto;
+  //
     return 0;
 }
   

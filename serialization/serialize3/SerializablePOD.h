@@ -40,13 +40,13 @@ const char* SerializablePOD<char*>::deserialize( const char* source, char*& targ
 {
     size_t length ;
     char* test;
-    std::cout <<"Vamos a deserializar" << std::endl;
+    std::cout <<"Vamos a deserializar char* " << std::endl;
     std::cout <<":----------address of char fiel in structure------------------------------->"<< static_cast<const void*>(&target)<<std::endl;
     memcpy( &length, source, sizeof(size_t));
     std::cout << "el length of string.."<< (size_t)length << std::endl;
     source = source +sizeof(size_t);
-    //target = (char*)malloc(sizeof(char)*length);
-    memcpy( target, source , length );
+    //target = (char*)malloc(sizeof(char)*length); //error
+    memcpy( target, source, length);
     std::cout << "salida: " << std::string(source,length) << std::endl;
     std::cout << "dato en el field despues de deserializar: : " << target << std::endl;
     std::cout <<":----------address->"<< static_cast<const void*>(target)<<std::endl;
